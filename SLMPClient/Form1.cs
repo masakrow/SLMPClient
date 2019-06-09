@@ -16,5 +16,15 @@ namespace SLMPClient
         {
             InitializeComponent();
         }
+
+        private void lstDevice_SelectedIndexChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void btnConnect_Click(object sender, EventArgs e)
+        {
+
+        }
     }
 }
