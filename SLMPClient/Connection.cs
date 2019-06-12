@@ -17,6 +17,7 @@ namespace SLMPClient
         private Socket socket;
         private const int bufSize = 255;
         private State state = new State();
+        SLMPFrame Frame = new SLMPFrame();
 
         public class State
         {
