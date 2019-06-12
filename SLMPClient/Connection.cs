@@ -19,7 +19,7 @@ namespace SLMPClient
         private State state = new State();
         SLMPFrame Frame = new SLMPFrame();
 
-        private static readonly int CONNECTION_OK = 1;
+        private static readonly int CONNECTION_OK = 0;
         private static readonly int CONNECTION_NG = -1;
 
         public class State
@@ -70,10 +70,24 @@ namespace SLMPClient
                 Debug.WriteLine("Packeg Send, No Bytes {0}", bytesSend);
 
                 return CONNECTION_OK;
-            } catch(Exception e)
+            } catch (SocketException se)
+            {
+                Debug.WriteLine(se.ToString());
+            }
+            catch (Exception e)
             {
                 Debug.WriteLine(e.ToString());
             }
+            return CONNECTION_NG;
+        }
+
+        public int recive(byte [] pucStream)
+        {
+            if (socket == null)
+            {
+                return CONNECTION_NG;
+            }
+
             return CONNECTION_NG;
         }
     }

@@ -53,7 +53,7 @@ namespace SLMPClient
         public static readonly ushort SLMP_TIMER_WAIT_FOREVER = (0x0000);
 
         /*[ Definition of value ]*/
-        public static readonly int SLMP_ERR_OK = 1;
+        public static readonly int SLMP_ERR_OK = 0;
         public static readonly int SLMP_ERR_NG = -1;
 
         /*[ Definition of mask value ]*/
@@ -78,25 +78,10 @@ namespace SLMPClient
             public byte [] pucData;			/* Data */
         }
 
-        private byte SHIFT_R24(ushort a)
-        {
-            return (byte)(a >> 24);
-        }
-        private byte SHIFT_R16(ushort a)
-        {
-            return (byte)(a >> 16);
-        }
-        private byte SHIFT_R12(ushort a)
-        {
-            return (byte)(a >> 12);
-        }
+
         private byte SHIFT_R8(ushort a)
         {
             return (byte)(a >> 8);
-        }
-        private byte SHIFT_R4(ushort a)
-        {
-            return (byte)(a >> 4);
         }
         private byte SHIFT_R0(ushort a)
         {
@@ -107,7 +92,7 @@ namespace SLMPClient
             return (ushort)((a <<4) | b);
         }
 
-        public int SLMP_MakePacketStream(ulong ulFrameType, SLMPFrame.SLMP_INFO p, byte [] pucStream)
+        public int SLMP_MakePacketStream(ushort ulFrameType, SLMP_INFO p, byte [] pucStream)
         {
             int i = 0;
             int iLength = 0;
@@ -119,7 +104,7 @@ namespace SLMPClient
                 return SLMP_ERR_NG;
             }
             /*[ Request : Binary Mode, Single Transmission Type ]*/
-            if ((ushort) ulFrameType == SLMP_FTYPE_BIN_REQ_ST)
+            if ( ulFrameType == SLMP_FTYPE_BIN_REQ_ST)
             {
                 iIndex = SLMP_FTYPE_BIN_REQ_ST_INDEX;
                 iLength = p.usDataLength - uiHeaderLength[iIndex];
@@ -155,43 +140,8 @@ namespace SLMPClient
                 }
                 return SLMP_ERR_OK;
             }
-            /*[ Response : Binary Mode, Single Transmission Type ]*/
-            else if ((ushort)ulFrameType == SLMP_FTYPE_BIN_RES_ST )
-	        {
-                iIndex = SLMP_FTYPE_BIN_RES_ST_INDEX;
-                iLength = (p.usDataLength) - uiHeaderLength[iIndex];
-                if (iLength < 0)
-                {
-                    return SLMP_ERR_NG;
-                }
-                else if (iLength > 0)
-                {
-                    if (p.pucData == null)
-                    {
-                        return SLMP_ERR_NG;
-                    }
-                }
-
-                pucStream[0] = SHIFT_R8(SLMP_FTYPE_BIN_RES_ST);
-                pucStream[1] = SHIFT_R0(SLMP_FTYPE_BIN_RES_ST);
-                pucStream[2] = SHIFT_R0(p.usNetNumber);
-                pucStream[3] = SHIFT_R0(p.usNodeNumber);
-                pucStream[4] = SHIFT_R0(p.usProcNumber);
-                pucStream[5] = SHIFT_R8(p.usProcNumber);
-                pucStream[6] = (byte)0x00;
-                pucStream[7] = SHIFT_R0(p.usDataLength);
-                pucStream[8] = SHIFT_R8(p.usDataLength);
-                pucStream[9] = SHIFT_R0(p.usEndCode);
-                pucStream[10] = SHIFT_R8(p.usEndCode);
-
-                for (i = 0; i < iLength; i++)
-                {
-                    pucStream[uiDataAddr[iIndex] + i] = p.pucData[i];
-                }
-                return SLMP_ERR_OK;
-            } 
             /*[ Request : Binary Mode, Multiple Transmission Type ]*/
-            else if ((ushort)ulFrameType == SLMP_FTYPE_BIN_REQ_MT )
+            else if (ulFrameType == SLMP_FTYPE_BIN_REQ_MT )
 	        {
                 iIndex = SLMP_FTYPE_BIN_REQ_MT_INDEX;
                 iLength = (p.usDataLength) - uiHeaderLength[iIndex];
@@ -233,45 +183,6 @@ namespace SLMPClient
                 }
                 return SLMP_ERR_OK;
             }
-            /*[ Response : Binary Mode, Multiple Transmission Type ]*/
-            else if ((ushort)ulFrameType == SLMP_FTYPE_BIN_RES_MT )
-	        {
-                iIndex = SLMP_FTYPE_BIN_RES_MT_INDEX;
-                iLength = (p.usDataLength) - uiHeaderLength[iIndex];
-                if (iLength < 0)
-                {
-                    return SLMP_ERR_NG;
-                }
-                else if (iLength > 0)
-                {
-                    if (p.pucData == null)
-                    {
-                        return SLMP_ERR_NG;
-                    }
-                }
-
-                pucStream[0] = SHIFT_R8(SLMP_FTYPE_BIN_RES_MT);
-                pucStream[1] = SHIFT_R0(SLMP_FTYPE_BIN_RES_MT);
-                pucStream[2] = SHIFT_R0(p.usSerialNumber);
-                pucStream[3] = SHIFT_R8(p.usSerialNumber);
-                pucStream[4] = (byte)0x00;
-                pucStream[5] = (byte)0x00;
-                pucStream[6] = SHIFT_R0(p.usNetNumber);
-                pucStream[7] = SHIFT_R0(p.usNodeNumber);
-                pucStream[8] = SHIFT_R0(p.usProcNumber);
-                pucStream[9] = SHIFT_R8(p.usProcNumber);
-                pucStream[10] =(byte)0x00;
-                pucStream[11] = SHIFT_R0(p.usDataLength);
-                pucStream[12] = SHIFT_R8(p.usDataLength);
-                pucStream[13] = SHIFT_R0(p.usEndCode);
-                pucStream[14] = SHIFT_R8(p.usEndCode);
-
-                for (i = 0; i < iLength; i++)
-                {
-                    pucStream[uiDataAddr[iIndex] + i] = p.pucData[i];
-                }
-                return SLMP_ERR_OK;
-            }
 
             return SLMP_ERR_NG;
         }
@@ -288,43 +199,10 @@ namespace SLMPClient
             {
                 return SLMP_ERR_NG;
             }
+
             usFrameType = CONCAT_2BIN(pucStream[0], pucStream[1]);
-
-            /*[ Request : Binary Mode, Single Transmission Type ]*/
-            if (usFrameType == SLMP_FTYPE_BIN_REQ_ST)
-            {
-                iIndex = SLMP_FTYPE_BIN_REQ_ST_INDEX;
-                uiTempLength = CONCAT_2BIN(pucStream[8], pucStream[7]);
-
-                iLength = (int)(uiTempLength - uiHeaderLength[iIndex]);
-                if (iLength < 0)
-                {
-                    return SLMP_ERR_NG;
-                }
-                else if (iLength > 0)
-                {
-                    if (p.pucData == null)
-                    {
-                        return SLMP_ERR_NG;
-                    }
-                }
-
-                (p.usNetNumber) = pucStream[2];
-                (p.usNodeNumber) = pucStream[3];
-                (p.usProcNumber) = CONCAT_2BIN(pucStream[5], pucStream[4]);
-                (p.usDataLength) = (ushort)uiTempLength;
-                (p.usTimer) = CONCAT_2BIN(pucStream[10], pucStream[9]);
-                (p.usCommand) = CONCAT_2BIN(pucStream[12], pucStream[11]);
-                (p.usSubCommand) = CONCAT_2BIN(pucStream[14], pucStream[13]);
-
-                for (i = 0; i < iLength; i++)
-                {
-                    p.pucData[i] = pucStream[uiDataAddr[iIndex] + i];
-                }
-                return SLMP_ERR_OK;
-            }
             /*[ Response : Binary Mode, Single Transmission Type ]*/
-            else if (usFrameType == SLMP_FTYPE_BIN_RES_ST)
+            if (usFrameType == SLMP_FTYPE_BIN_RES_ST)
             {
                 iIndex = SLMP_FTYPE_BIN_RES_ST_INDEX;
                 uiTempLength = CONCAT_2BIN(pucStream[8], pucStream[7]);
@@ -354,40 +232,7 @@ namespace SLMPClient
                 }
                 return SLMP_ERR_OK;
             }
-            /*[ Request : Binary Mode, Multiple Transmission Type ]*/
-            else if (usFrameType == SLMP_FTYPE_BIN_REQ_MT)
-            {
-                iIndex = SLMP_FTYPE_BIN_REQ_MT_INDEX;
-                uiTempLength = CONCAT_2BIN(pucStream[12], pucStream[11]);
-
-                iLength = (int)(uiTempLength - uiHeaderLength[iIndex]);
-                if (iLength < 0)
-                {
-                    return SLMP_ERR_NG;
-                }
-                else if (iLength > 0)
-                {
-                    if (p.pucData == null)
-                    {
-                        return SLMP_ERR_NG;
-                    }
-                }
-
-                (p.usSerialNumber) = CONCAT_2BIN(pucStream[3], pucStream[2]);
-                (p.usNetNumber) = pucStream[6];
-                (p.usNodeNumber) = pucStream[7];
-                (p.usProcNumber) = CONCAT_2BIN(pucStream[9], pucStream[8]);
-                (p.usDataLength) = (ushort)uiTempLength;
-                (p.usTimer) = CONCAT_2BIN(pucStream[14], pucStream[13]);
-                (p.usCommand) = CONCAT_2BIN(pucStream[16], pucStream[15]);
-                (p.usSubCommand) = CONCAT_2BIN(pucStream[18], pucStream[17]);
-
-                for (i = 0; i < iLength; i++)
-                {
-                    p.pucData[i] = pucStream[uiDataAddr[iIndex] + i];
-                }
-                return SLMP_ERR_OK;
-            }
+            
             /*[ Response : Binary Mode, Multiple Transmission Type ]*/
             else if (usFrameType == SLMP_FTYPE_BIN_RES_MT)
             {
