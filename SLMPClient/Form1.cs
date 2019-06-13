@@ -25,11 +25,17 @@ namespace SLMPClient
 
         private void lstDevice_SelectedIndexChanged(object sender, EventArgs e)
         {
-            CheckTextBox();
+            CheckTextBoxSLMP();
         }
 
         private void btnConnect_Click(object sender, EventArgs e)
         {
+            CheckTextBoxConnection();
+            if(txtPort.Text == "" || txtIPAddress.Text == "")
+            {
+                return;
+            }
+
             if (SLMPClient.socket == null)
             {
                 errorID = SLMPClient.connect(txtIPAddress.Text, Int32.Parse(txtPort.Text));
@@ -68,10 +74,10 @@ namespace SLMPClient
 
         private void btnRead_Click(object sender, EventArgs e)
         {
-            if (!txtDeviceNo.Equals("") || !txtPoints.Equals("") || !lstDevice.Equals(""))
+            if (!txtDeviceNo.Text.Equals("") || !txtPoints.Text.Equals("") || !lstDevice.Text.Equals(""))
             {
                 byte[] acuSend = { 0x64, 0x00, 0x00, 0xA8, 0x05, 0x00 };
-                byte[] pucStream = new byte[30];
+                byte[] pucStream = new byte[1518];
                 
                 SLMPinfo_req.usNetNumber = 0;
                 SLMPinfo_req.usNodeNumber = 0xFF;
@@ -92,7 +98,12 @@ namespace SLMPClient
                     {
                        if( SLMPClient.Frame.SLMP_GetSLMPInfo(SLMPinfo_res, pucStream) == 0)
                         {
-                            txtData.Text = BitConverter.ToString(SLMPinfo_res.pucData);
+                            for(int i = 0; i<SLMPinfo_res.pucData.Length; i++)
+                            {
+                                int offset = Int32.Parse(txtDeviceNo.Text)+i;
+                                txtData.Text += lstDevice.Text + offset.ToString() + "=" +  SLMPinfo_res.pucData[i].ToString() + "\r\n";
+                            }
+                            //txtData.Text = BitConverter.ToString(SLMPinfo_res.pucData);
                         }
                     }
                 }
@@ -102,7 +113,7 @@ namespace SLMPClient
             }
         }
 
-        private void CheckTextBox()
+        private void CheckTextBoxSLMP()
         {
             Color ColorNG = Color.LightCoral;
             Color ColorOK = Color.White;
@@ -111,6 +122,7 @@ namespace SLMPClient
                 if(txtDeviceNo.Text == "")
                 {
                     txtDeviceNo.BackColor = ColorNG;
+                    
                 }
                 else
                 {
@@ -123,26 +135,53 @@ namespace SLMPClient
                 else
                 {
                     txtPoints.BackColor = ColorOK;
+                    
                 }
                 if (lstDevice.Text == "")
                 {
                     lstDevice.BackColor = ColorNG;
+
                 }
                 else
                 {
                     lstDevice.BackColor = ColorOK;
+
                 }
+            }
+        }
+
+        private void CheckTextBoxConnection()
+        {
+            Color ColorNG = Color.LightCoral;
+            Color ColorOK = Color.White;
+
+            if(txtIPAddress.Text == "")
+            {
+                txtIPAddress.BackColor = ColorNG;
+            }
+            else
+            {
+                txtIPAddress.BackColor = ColorOK;
+            }
+            if (txtPort.Text == "")
+            {
+                txtPort.BackColor = ColorNG;
+            }
+            else
+            {
+                txtPort.BackColor = ColorOK;
             }
         }
 
         private void txtDeviceNo_TextChanged(object sender, EventArgs e)
         {
-            CheckTextBox();
+            CheckTextBoxSLMP();
         }
 
         private void txtPoints_TextChanged(object sender, EventArgs e)
         {
-            CheckTextBox();
+            CheckTextBoxSLMP();
         }
+
     }
 }

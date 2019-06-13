@@ -196,6 +196,7 @@
             this.txtData.Multiline = true;
             this.txtData.Name = "txtData";
             this.txtData.ReadOnly = true;
+            this.txtData.ScrollBars = System.Windows.Forms.ScrollBars.Horizontal;
             this.txtData.Size = new System.Drawing.Size(273, 143);
             this.txtData.TabIndex = 0;
             // 
@@ -217,7 +218,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(307, 376);
+            this.ClientSize = new System.Drawing.Size(307, 370);
             this.Controls.Add(this.boxData);
             this.Controls.Add(this.boxSLMP);
             this.Controls.Add(this.boxConnection);
