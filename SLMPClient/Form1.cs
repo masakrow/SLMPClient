@@ -76,7 +76,6 @@ namespace SLMPClient
         {
             if (!txtDeviceNo.Text.Equals("") || !txtPoints.Text.Equals("") || !lstDevice.Text.Equals(""))
             {
-                byte[] acuSend = { 0x64, 0x00, 0x00, 0xA8, 0x05, 0x00 };
                 byte[] pucStream = new byte[1518];
                 
                 SLMPinfo_req.usNetNumber = 0;
@@ -86,7 +85,7 @@ namespace SLMPClient
                 SLMPinfo_req.usTimer = SLMPFrame.SLMP_TIMER_WAIT_FOREVER;
                 SLMPinfo_req.usCommand = SLMPFrame.SLMP_COMMAND_DEVICE_READ;
                 SLMPinfo_req.usSubCommand = 0x0000;
-                SLMPinfo_req.pucData = acuSend;
+                SLMPinfo_req.pucData = SLMPClient.Frame.DeviceConv(txtDeviceNo.Text, lstDevice.Text, txtPoints.Text);
 
                 SLMPClient.Frame.SLMP_MakePacketStream(SLMPFrame.SLMP_FTYPE_BIN_REQ_ST, SLMPinfo_req, pucStream);
 
@@ -183,5 +182,11 @@ namespace SLMPClient
             CheckTextBoxSLMP();
         }
 
+        private void Button1_Click(object sender, EventArgs e)
+        {
+            byte [] acuStream = SLMPClient.Frame.DeviceConv(txtDeviceNo.Text, lstDevice.Text, txtPoints.Text);
+
+            txtData.Text = BitConverter.ToString(acuStream);
+        }
     }
 }

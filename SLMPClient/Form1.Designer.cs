@@ -44,6 +44,7 @@
             this.boxData = new System.Windows.Forms.GroupBox();
             this.txtData = new System.Windows.Forms.TextBox();
             this.boxConnection = new System.Windows.Forms.GroupBox();
+            this.button1 = new System.Windows.Forms.Button();
             this.boxSLMP.SuspendLayout();
             this.boxData.SuspendLayout();
             this.boxConnection.SuspendLayout();
@@ -118,7 +119,9 @@
             this.lstDevice.Items.AddRange(new object[] {
             "D",
             "W",
-            "R"});
+            "R",
+            "SD",
+            "ZR"});
             this.lstDevice.Location = new System.Drawing.Point(69, 13);
             this.lstDevice.Name = "lstDevice";
             this.lstDevice.Size = new System.Drawing.Size(100, 21);
@@ -214,11 +217,22 @@
             this.boxConnection.TabStop = false;
             this.boxConnection.Text = "Connection";
             // 
+            // button1
+            // 
+            this.button1.Location = new System.Drawing.Point(128, 379);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(75, 23);
+            this.button1.TabIndex = 6;
+            this.button1.Text = "Test";
+            this.button1.UseVisualStyleBackColor = true;
+            this.button1.Click += new System.EventHandler(this.Button1_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(307, 370);
+            this.ClientSize = new System.Drawing.Size(307, 421);
+            this.Controls.Add(this.button1);
             this.Controls.Add(this.boxData);
             this.Controls.Add(this.boxSLMP);
             this.Controls.Add(this.boxConnection);
@@ -255,6 +269,7 @@
         private System.Windows.Forms.GroupBox boxData;
         private System.Windows.Forms.TextBox txtData;
         private System.Windows.Forms.GroupBox boxConnection;
+        private System.Windows.Forms.Button button1;
     }
 }
 

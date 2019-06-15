@@ -91,6 +91,92 @@ namespace SLMPClient
         {
             return (ushort)((a <<4) | b);
         }
+        private byte DeviceCode(string Device)
+        {
+            byte Value;
+            switch (Device)
+            {
+                case "D":
+                    Value = 0xA8;
+                    break;
+                case "W":
+                    Value = 0xB4;
+                    break;
+                case "SD":
+                    Value = 0xA9;
+                    break;
+                case "X":
+                    Value = 0x9C;
+                    break;
+                case "Y":
+                    Value = 0x9D;
+                    break;
+                case "M":
+                    Value = 0x90;
+                    break;
+                case "L":
+                    Value = 0x92;
+                    break;
+                case "F":
+                    Value = 0x93;
+                    break;
+                case "B":
+                    Value = 0xA0;
+                    break;
+                case "S":
+                    Value = 0x98;
+                    break;
+                case "SM":
+                    Value = 0x91;
+                    break;
+                case "R":
+                    Value = 0xAF;
+                    break;
+                case "ZR":
+                    Value = 0xB0;
+                    break;
+                default:
+                    Value = 0x00;
+                    break;
+            }
+
+            return Value;
+        }
+
+        public byte[] DeviceConv (string DeviceNo, string Device, string Points)
+        {
+            byte[] Data = new byte[6];
+            int DeviceNo_temp;
+            int temp1 = Device.IndexOfAny("WXYB".ToCharArray());
+
+            if (temp1 != -1)
+                {
+                   DeviceNo_temp = Int32.Parse(DeviceNo, System.Globalization.NumberStyles.HexNumber);
+                
+                }
+            else
+                {
+                DeviceNo_temp = Int32.Parse(DeviceNo);
+            }
+   
+                //Konwersja DeviceNo na byte
+                Data[0] = (byte)(DeviceNo_temp & 0x0000FF);
+                Data[1] = (byte)((DeviceNo_temp & 0x00FF00) >> 8);
+                Data[2] = (byte)((DeviceNo_temp & 0xFF0000) >> 16);
+
+            //Konwersja na Device Code
+
+            Data[3] = DeviceCode(Device);
+
+            //Konwersja liczny Points na byte
+            ushort Points_temp = (ushort)Int16.Parse(Points);
+
+            Data[4] = (byte)(Points_temp & 0x00FF);
+            Data[5] = (byte)((Points_temp & 0xFF00)>>8);
+
+
+            return Data;
+        }
 
         public int SLMP_MakePacketStream(ushort ulFrameType, SLMP_INFO p, byte [] pucStream)
         {
