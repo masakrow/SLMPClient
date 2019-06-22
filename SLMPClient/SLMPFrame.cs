@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Diagnostics;
 
 namespace SLMPClient
 {
@@ -64,7 +65,7 @@ namespace SLMPClient
         private static ushort[] uiDataAddr = { 15, 11, 19, 15, 30, 22, 38, 30 };
         
 
-        public struct SLMP_INFO
+        public class SLMP_INFO
         {
             public ushort usSerialNumber;      /* Serial Number */
             public ushort usNetNumber;     /* Network Number */
@@ -87,9 +88,9 @@ namespace SLMPClient
         {
             return (byte)a;
         }
-        private ushort CONCAT_2BIN(byte a, byte b)
+        public static ushort CONCAT_2BIN(byte a, byte b)
         {
-            return (ushort)((a <<4) | b);
+            return (ushort)((a <<8) | b);
         }
         private byte DeviceCode(string Device)
         {
@@ -273,7 +274,7 @@ namespace SLMPClient
             return SLMP_ERR_NG;
         }
 
-        public int SLMP_GetSLMPInfo (SLMP_INFO p,  byte[] pucStream)
+        public int SLMP_GetSLMPInfo ( SLMP_INFO p,  byte[] pucStream)
         {
             int i = 0;
             int iIndex = 0;
@@ -287,19 +288,25 @@ namespace SLMPClient
             }
 
             usFrameType = CONCAT_2BIN(pucStream[0], pucStream[1]);
+
+            Debug.WriteLine(usFrameType.ToString());
             /*[ Response : Binary Mode, Single Transmission Type ]*/
             if (usFrameType == SLMP_FTYPE_BIN_RES_ST)
             {
+                Debug.WriteLine("I'm in 1");
                 iIndex = SLMP_FTYPE_BIN_RES_ST_INDEX;
                 uiTempLength = CONCAT_2BIN(pucStream[8], pucStream[7]);
 
                 iLength = (int)(uiTempLength - uiHeaderLength[iIndex]);
+
+                Debug.WriteLine("Lenght:" + iLength.ToString());
                 if (iLength < 0)
                 {
                     return SLMP_ERR_NG;
                 }
                 else if (iLength > 0)
                 {
+                    p.pucData = new byte[iLength];
                     if (p.pucData == null)
                     {
                         return SLMP_ERR_NG;
@@ -322,6 +329,7 @@ namespace SLMPClient
             /*[ Response : Binary Mode, Multiple Transmission Type ]*/
             else if (usFrameType == SLMP_FTYPE_BIN_RES_MT)
             {
+                Debug.WriteLine("I'm in 2");
                 iIndex = SLMP_FTYPE_BIN_RES_MT_INDEX;
                 uiTempLength = CONCAT_2BIN(pucStream[12], pucStream[11]);
 

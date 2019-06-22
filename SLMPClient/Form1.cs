@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Diagnostics;
 
 namespace SLMPClient
 {
@@ -22,6 +23,9 @@ namespace SLMPClient
         private SLMPFrame.SLMP_INFO SLMPinfo_res = new SLMPFrame.SLMP_INFO();
         private SLMPFrame Frame = new SLMPFrame();
         private int errorID;
+        private bool conneted;
+
+       
 
         private void lstDevice_SelectedIndexChanged(object sender, EventArgs e)
         {
@@ -45,7 +49,9 @@ namespace SLMPClient
                     MessageBox.Show("Connection Fails!");
                     return;
                 }
-                btnConnect.Text = "Disconnect";
+                conneted = true;
+                btnConnect.Enabled = false;
+                btnDisconnect.Enabled = true;
                 boxSLMP.Enabled = true;
             } else if(!SLMPClient.socket.Connected)
             {
@@ -58,17 +64,8 @@ namespace SLMPClient
                 }
                 btnConnect.Text = "Disconnect";
                 boxSLMP.Enabled = true;
-            }
-            else
-            {
-                errorID = SLMPClient.disconnect();
-                if (errorID != 0)
-                {
-                    MessageBox.Show("Can't disconnect");
-                    return;
-                }
-                btnConnect.Text = "Connect";
-                boxSLMP.Enabled = false;
+                btnConnect.Enabled = false;
+                btnDisconnect.Enabled = true;
             }
         }
 
@@ -89,22 +86,40 @@ namespace SLMPClient
 
                 SLMPClient.Frame.SLMP_MakePacketStream(SLMPFrame.SLMP_FTYPE_BIN_REQ_ST, SLMPinfo_req, pucStream);
 
+                //txtData.Text = BitConverter.ToString(pucStream);
+
                 SLMPClient.send(pucStream);
 
                 if (SLMPClient.send(pucStream) == 0)
                 {
                     if(SLMPClient.recive(pucStream) == 0)
                     {
-                       if( SLMPClient.Frame.SLMP_GetSLMPInfo(SLMPinfo_res, pucStream) == 0)
+                        //txtData.Text = BitConverter.ToString(pucStream);
+                        if ( SLMPClient.Frame.SLMP_GetSLMPInfo(SLMPinfo_res, pucStream) == 0)
                         {
-                            for(int i = 0; i<SLMPinfo_res.pucData.Length; i++)
+                            txtData.Text = "";
+                            int j=0;
+                            for(int i = 0; i<SLMPinfo_res.pucData.Length/2; i++)
                             {
                                 int offset = Int32.Parse(txtDeviceNo.Text)+i;
-                                txtData.Text += lstDevice.Text + offset.ToString() + "=" +  SLMPinfo_res.pucData[i].ToString() + "\r\n";
+                                txtData.Text += lstDevice.Text + offset.ToString() + "=" + SLMPFrame.CONCAT_2BIN(SLMPinfo_res.pucData[j+1], SLMPinfo_res.pucData[j]).ToString() + "\r\n";
+                                j += 2;
                             }
                             //txtData.Text = BitConverter.ToString(SLMPinfo_res.pucData);
                         }
+                        else
+                        {
+                            Debug.WriteLine("Frame Error");
+                        }
                     }
+                    else
+                    {
+                        Debug.WriteLine("Recived Error");
+                    }
+                }
+                else
+                {
+                    Debug.WriteLine("Send Error");
                 }
             } else
             {
@@ -187,6 +202,26 @@ namespace SLMPClient
             byte [] acuStream = SLMPClient.Frame.DeviceConv(txtDeviceNo.Text, lstDevice.Text, txtPoints.Text);
 
             txtData.Text = BitConverter.ToString(acuStream);
+        }
+
+        private void BtnDisconnect_Click(object sender, EventArgs e)
+        {
+           errorID = SLMPClient.disconnect();
+
+            if(errorID != 0)
+            {
+                MessageBox.Show("Something goes wrong!");
+                return;
+            }
+
+         
+            if (!SLMPClient.socket.Connected)
+            {
+                conneted = false;
+                btnConnect.Enabled = true;
+                btnDisconnect.Enabled = false;
+                boxSLMP.Enabled = false;
+            }
         }
     }
 }

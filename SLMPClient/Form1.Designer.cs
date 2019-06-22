@@ -44,7 +44,7 @@
             this.boxData = new System.Windows.Forms.GroupBox();
             this.txtData = new System.Windows.Forms.TextBox();
             this.boxConnection = new System.Windows.Forms.GroupBox();
-            this.button1 = new System.Windows.Forms.Button();
+            this.btnDisconnect = new System.Windows.Forms.Button();
             this.boxSLMP.SuspendLayout();
             this.boxData.SuspendLayout();
             this.boxConnection.SuspendLayout();
@@ -66,7 +66,7 @@
             this.txtIPAddress.Name = "txtIPAddress";
             this.txtIPAddress.Size = new System.Drawing.Size(100, 20);
             this.txtIPAddress.TabIndex = 1;
-            this.txtIPAddress.Text = "192.168.3.39";
+            this.txtIPAddress.Text = "192.168.3.250";
             // 
             // label2
             // 
@@ -84,7 +84,7 @@
             this.txtPort.Name = "txtPort";
             this.txtPort.Size = new System.Drawing.Size(100, 20);
             this.txtPort.TabIndex = 1;
-            this.txtPort.Text = "8000";
+            this.txtPort.Text = "6500";
             // 
             // btnConnect
             // 
@@ -105,9 +105,10 @@
             this.boxSLMP.Controls.Add(this.txtPoints);
             this.boxSLMP.Controls.Add(this.txtDeviceNo);
             this.boxSLMP.Controls.Add(this.label3);
+            this.boxSLMP.Enabled = false;
             this.boxSLMP.Location = new System.Drawing.Point(7, 91);
             this.boxSLMP.Name = "boxSLMP";
-            this.boxSLMP.Size = new System.Drawing.Size(292, 95);
+            this.boxSLMP.Size = new System.Drawing.Size(401, 95);
             this.boxSLMP.TabIndex = 3;
             this.boxSLMP.TabStop = false;
             this.boxSLMP.Text = "SLMP";
@@ -188,7 +189,7 @@
             this.boxData.Controls.Add(this.txtData);
             this.boxData.Location = new System.Drawing.Point(7, 192);
             this.boxData.Name = "boxData";
-            this.boxData.Size = new System.Drawing.Size(292, 169);
+            this.boxData.Size = new System.Drawing.Size(401, 169);
             this.boxData.TabIndex = 4;
             this.boxData.TabStop = false;
             this.boxData.Text = "Data";
@@ -199,40 +200,41 @@
             this.txtData.Multiline = true;
             this.txtData.Name = "txtData";
             this.txtData.ReadOnly = true;
-            this.txtData.ScrollBars = System.Windows.Forms.ScrollBars.Horizontal;
-            this.txtData.Size = new System.Drawing.Size(273, 143);
+            this.txtData.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
+            this.txtData.Size = new System.Drawing.Size(386, 143);
             this.txtData.TabIndex = 0;
             // 
             // boxConnection
             // 
             this.boxConnection.Controls.Add(this.txtIPAddress);
             this.boxConnection.Controls.Add(this.label1);
+            this.boxConnection.Controls.Add(this.btnDisconnect);
             this.boxConnection.Controls.Add(this.btnConnect);
             this.boxConnection.Controls.Add(this.label2);
             this.boxConnection.Controls.Add(this.txtPort);
             this.boxConnection.Location = new System.Drawing.Point(7, 9);
             this.boxConnection.Name = "boxConnection";
-            this.boxConnection.Size = new System.Drawing.Size(292, 76);
+            this.boxConnection.Size = new System.Drawing.Size(401, 76);
             this.boxConnection.TabIndex = 5;
             this.boxConnection.TabStop = false;
             this.boxConnection.Text = "Connection";
             // 
-            // button1
+            // btnDisconnect
             // 
-            this.button1.Location = new System.Drawing.Point(128, 379);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(75, 23);
-            this.button1.TabIndex = 6;
-            this.button1.Text = "Test";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.Button1_Click);
+            this.btnDisconnect.Enabled = false;
+            this.btnDisconnect.Location = new System.Drawing.Point(288, 22);
+            this.btnDisconnect.Name = "btnDisconnect";
+            this.btnDisconnect.Size = new System.Drawing.Size(107, 36);
+            this.btnDisconnect.TabIndex = 2;
+            this.btnDisconnect.Text = "Disconnect";
+            this.btnDisconnect.UseVisualStyleBackColor = true;
+            this.btnDisconnect.Click += new System.EventHandler(this.BtnDisconnect_Click);
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(307, 421);
-            this.Controls.Add(this.button1);
+            this.ClientSize = new System.Drawing.Size(417, 374);
             this.Controls.Add(this.boxData);
             this.Controls.Add(this.boxSLMP);
             this.Controls.Add(this.boxConnection);
@@ -269,7 +271,7 @@
         private System.Windows.Forms.GroupBox boxData;
         private System.Windows.Forms.TextBox txtData;
         private System.Windows.Forms.GroupBox boxConnection;
-        private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.Button btnDisconnect;
     }
 }
 

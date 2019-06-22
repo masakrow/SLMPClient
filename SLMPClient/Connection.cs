@@ -22,31 +22,33 @@ namespace SLMPClient
 
         public int connect(string address, int port)
         {
-            if(socket != null)
-            {
-                return CONNECTION_NG;
-            }
 
             try
             {
+                Debug.WriteLine("1");
                 socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+                
                 try
                 {
+                    Debug.WriteLine("2");
                     socket.Connect(new IPEndPoint(IPAddress.Parse(address), port));
                     Debug.WriteLine("Connection Opened with {0}", socket.RemoteEndPoint.ToString());
                     return CONNECTION_OK;
                 }
                 catch (SocketException se)
                 {
+                    Debug.WriteLine("3");
                     Debug.WriteLine(se.ToString());
                 }
                 catch (Exception e)
                 {
+                    Debug.WriteLine("4");
                     Debug.WriteLine(e.ToString());
                 }
             }
             catch (Exception e)
             {
+                Debug.WriteLine("5");
                 Debug.WriteLine(e.ToString());
             }
             return CONNECTION_NG;
@@ -102,6 +104,7 @@ namespace SLMPClient
             try
             {
                 socket.Receive(pucStream);
+                return CONNECTION_OK;
             } catch(SocketException se)
             {
                 Debug.WriteLine(se.ToString());
